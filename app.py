@@ -86,9 +86,9 @@ def display_llm_output(parsed_json, time_stats, inserted_id, unique_id):
     st.write(f"**Unique ID:** `{unique_id}`")
 
 def run_app():
-    st.title("Resume Parser Application (Google Drive Integration)")
+    st.title("Resume Parser Application (GiveryAI)")
     
-    tab1, tab2, tab3 = st.tabs(["アップロード", "保存済み結果", "Google Drive Resumes"])
+    tab1, tab2 = st.tabs(["アップロード", "保存済み結果"])
     
     # --- Tab 1: Manual Upload ---
     with tab1:
