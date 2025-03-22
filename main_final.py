@@ -1,7 +1,6 @@
 import os
 import json
 import time
-#import tiktoken
 import certifi
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -12,7 +11,7 @@ from datetime import datetime, timezone
 from utils.jp_schema import ResumeSchema
 from knowledge.pdf_docling import extract_text_and_tables
 from knowledge.parse_excel import extract_excel_to_markdown
-from knowledge.parsedoc import extract_text_doc
+from knowledge.parsedoc import extract_text_docx_file, extract_text_from_doc
 from prompt.test1 import RESUME_EXTRACTION_PROMPT
 
 load_dotenv()
@@ -22,7 +21,7 @@ MONGODB_URI = os.getenv("MONGODB_URI")
 # MongoDB Connection
 client = MongoClient(
         MONGODB_URI, 
-        tlsCAFile=certifi.where(),  # <-- Provide certifi’s CA bundle
+        tlsCAFile=certifi.where(),  
         serverSelectionTimeoutMS=5000
     )
 db = client["resume_db"]
@@ -40,13 +39,15 @@ def log_time(func):
 
 #Parsing Resume Files
 @log_time
-def parse_file(file_path, output_dir="output_pdfs"):
+def parse_file(file_path):
     """Given a path to a file on disk, parse it according to extension."""
     file_extension = os.path.splitext(file_path)[1].lower()
     if file_extension == ".pdf":
         return extract_text_and_tables(file_path)
-    elif file_extension in [".doc", ".docx"]:
-        return extract_text_doc(file_path, output_dir)
+    elif file_extension in [".doc"]:
+        return extract_text_from_doc(file_path)
+    elif file_extension in [".docx"]:
+        return extract_text_docx_file(file_path)
     elif file_extension == ".xlsx":
         return extract_excel_to_markdown(file_path)
     else:

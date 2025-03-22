@@ -1,54 +1,31 @@
-import os
 import subprocess
+import os
 from docling.document_converter import DocumentConverter
 
-def convert_doc_to_pdf(doc_path, output_dir="output_pdfs"):
+def extract_text_docx_file(path):
+    
+    converter = DocumentConverter()
+    result = converter.convert(path)
+    parsed_data = result.document.export_to_markdown()
+    return parsed_data
 
+def extract_text_from_doc(doc_path): 
     if not os.path.exists(doc_path):
         raise FileNotFoundError(f"Input file not found: {doc_path}")
+    if not doc_path.endswith(".doc"):
+        raise ValueError(f"Unsupported file type: {doc_path}. Expected .doc")
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir, exist_ok=True)
-
-    doc_name = os.path.basename(doc_path)
-    
-    if doc_name.endswith(".doc"):
-        pdf_name = doc_name.replace(".doc", ".pdf")
-    elif doc_name.endswith(".docx"):
-        pdf_name = doc_name.replace(".docx", ".pdf")
-    else:
-        raise ValueError(f"Unsupported file type: {doc_name}. Expected .doc or .docx")
-
-    pdf_path = os.path.join(output_dir, pdf_name)
-
-    if not os.path.exists(pdf_path):   
-        try:
-            result = subprocess.run(
-                ["libreoffice", "--headless", "--convert-to", "pdf", doc_path, "--outdir", output_dir],
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
-            print(f"LibreOffice output: {result.stdout}")
-            if result.stderr:
-                print(f"LibreOffice warnings/errors: {result.stderr}")
-        except subprocess.CalledProcessError as e:
-            raise FileNotFoundError(f"Conversion failed: {e.stderr}")
-
-    if os.path.exists(pdf_path):
-        print(f"Conversion successful: {pdf_path}")
-        return pdf_path
-    else:
-        raise FileNotFoundError(f"Failed to convert {doc_path} to .pdf")
-
-def extract_text_doc(doc_path, output_dir="output_pdfs"):
-    pdf_path = convert_doc_to_pdf(doc_path, output_dir)
     try:
-        converter = DocumentConverter()
-        result = converter.convert(pdf_path)
-        parsed_data = result.document.export_to_markdown()
-        return parsed_data
-    except Exception as e:
-        print(f"Error during extraction: {str(e)}")
-        raise
+        result = subprocess.run(
+            ["antiword", doc_path],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        raise FileNotFoundError(f"Antiword failed: {e.stderr}")
+    except FileNotFoundError:
+        raise FileNotFoundError("antiword is not installed. Install it via 'brew install antiword' on macOS or 'apt-get install antiword' on Linux.")
+    
