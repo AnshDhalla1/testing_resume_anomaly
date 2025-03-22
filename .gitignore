@@ -1,5 +1,6 @@
 .env
 myenv
+test
 giveryai-b5a77b4d7d86.json
 /utils/test_excelupload.py
 /utils/test_version2uploadexcel.py
