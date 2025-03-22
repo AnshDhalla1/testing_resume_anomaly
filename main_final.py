@@ -1,7 +1,7 @@
 import os
 import json
 import time
-import tiktoken
+#import tiktoken
 import certifi
 from dotenv import load_dotenv
 from openai import OpenAI
