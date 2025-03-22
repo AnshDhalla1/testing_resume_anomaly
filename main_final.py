@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from utils.jp_schema import ResumeSchema
 from knowledge.pdf_docling import extract_text_and_tables
 from knowledge.parse_excel import extract_excel_to_markdown
-from knowledge.parsedoc import extract_text_and_tables
+from knowledge.parsedoc import extract_text_doc
 from prompt.test1 import RESUME_EXTRACTION_PROMPT
 
 load_dotenv()
@@ -46,7 +46,7 @@ def parse_file(file_path, output_dir="output_pdfs"):
     if file_extension == ".pdf":
         return extract_text_and_tables(file_path)
     elif file_extension in [".doc", ".docx"]:
-        return extract_text_and_tables(file_path, output_dir)
+        return extract_text_doc(file_path, output_dir)
     elif file_extension == ".xlsx":
         return extract_excel_to_markdown(file_path)
     else:

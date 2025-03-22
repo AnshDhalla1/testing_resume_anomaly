@@ -42,7 +42,7 @@ def convert_doc_to_pdf(doc_path, output_dir="output_pdfs"):
     else:
         raise FileNotFoundError(f"Failed to convert {doc_path} to .pdf")
 
-def extract_text_and_tables(doc_path, output_dir="output_pdfs"):
+def extract_text_doc(doc_path, output_dir="output_pdfs"):
     pdf_path = convert_doc_to_pdf(doc_path, output_dir)
     try:
         converter = DocumentConverter()
